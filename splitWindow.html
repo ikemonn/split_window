@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<meta charset = "utf-8">
+    <script>
+    //解像度
+    var screenWidth; 
+    var screenHeight;
+    //エクステンションクリック時に開いていたタブのURL
+    var currentURL;
+    //エクステンションクリック時に開いていたwindowのId
+    var currentWindowId;
+
+
+ 
+   
+
+   
+    //アイコン押下時のイベント 
+    chrome.browserAction.onClicked.addListener(function(tab){
+
+        screenWidth =  window.screen.width;
+        screenHeight =  window.screen.height;
+        console.log("screenWidthは" + screenWidth);
+        console.log("screenHeightは" + screenHeight);
+
+
+        
+        //現在選択されているwindowID取得
+        chrome.windows.getCurrent(function(currentWindow) {
+            currentWindowId = currentWindow.id;
+            console.log("windowIDは" + currentWindowId);
+        });
+
+        //現在選択されているwindowを右半分に表示する
+        chrome.windows.getLastFocused(function(Window) {
+            //windowの移動
+            chrome.windows.update(currentWindowId, 
+                {"top":0,"left":screenWidth / 2,"width":screenWidth / 2,"height":screenHeight}
+            )
+        });
+        
+        
+        
+        //新しいウインドウを(0,0)に開く
+        //現在のタブのURL取得
+        chrome.tabs.getSelected(null, function(currentTab) {
+            chrome.tabs.remove(currentTab.id);
+            currentURL = currentTab.url;
+            //console.log("currentURL:" + currentURL);
+            chrome.windows.create({"url":currentURL,"top":0,"left":0,"width":screenWidth / 2,"height":screenHeight});
+                
+        });
+
+        
+
+
+
+
+    });        
+    </script>
+</html>
